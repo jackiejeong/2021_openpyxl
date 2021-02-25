@@ -3,7 +3,7 @@ import Preprocessing
 import Excel
 
 if __name__ == '__main__':
-    
+
     root = tk.Tk()
     root.title('정량분석')
     root.geometry('300x300+100+100')

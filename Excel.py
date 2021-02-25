@@ -1,4 +1,3 @@
-from datetime import date
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl import Workbook
 from openpyxl.chart import (LineChart, BarChart, PieChart, Reference, Series, reference)

@@ -1,4 +1,5 @@
 from numpy.lib.npyio import load
+import tkinter.messagebox
 import pandas as pd
 from datetime import datetime
 from tkinter import filedialog
@@ -19,7 +20,7 @@ mod = sys.modules[__name__]
 
 #
 def Load():
-    # 메세지 창 추가 '전처리가 완료된 엑셀 파일을 불러오시오.'
+    tkinter.messagebox.showinfo('messagebox', '전처리가 완료된 엑셀 파일을 불러오시오.')
     loadpath = filedialog.askopenfilename(initialdir="/", title="엑셀 파일 선택",
                                           filetypes=(("Excel files","*.xlsx"),
                                           ("all files", "*.*")))
@@ -27,7 +28,7 @@ def Load():
 
 #
 def Save():
-    # 메세지 창 추가 '엑셀 파일 저장할 위치를 선택하시오.'
+    tkinter.messagebox.showinfo('messagebox', '저장할 위치를 선택하시오.')
     savepath = filedialog.asksaveasfilename(initialdir="/", title="저장 위치 선택",
                                          filetypes=(("Excel files","*.xlsx"),
                                          ("all files", "*.*")))
