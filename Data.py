@@ -83,11 +83,11 @@ def 주요국출원동향():
     return B그래프data
 
 #
-def KR상위다출원국가():
+def 상위다출원국가(code):
     Rawdata = pd.read_excel(loadpath)
 
     #데이터정리
-    Ccondition1 = (Rawdata['출원국가코드'] == 'KR')
+    Ccondition1 = (Rawdata['출원국가코드'] == code)
     C출원국가data = Rawdata[Ccondition1]
     C출원국가코드counts = C출원국가data['출원인국가코드'].value_counts()
     C상위4개국 = C출원국가코드counts.reset_index()
@@ -115,125 +115,8 @@ def KR상위다출원국가():
 
     C그래프merge1 = pd.merge(C그래프1, C그래프2, on = '출원연도', how = 'left')
     C그래프merge2 = pd.merge(C그래프merge1, C그래프3, on = '출원연도', how = 'left')
-    C상위다출원국가KR = pd.merge(C그래프merge2, C그래프4, on = '출원연도', how = 'left')
+    C상위다출원국가 = pd.merge(C그래프merge2, C그래프4, on = '출원연도', how = 'left')
 
-    C상위다출원국가KR.columns = ['출원연도', '{}'.format(C상위4개국['출원인국가코드'][0]), '{}'.format(C상위4개국['출원인국가코드'][1]), '{}'.format(C상위4개국['출원인국가코드'][2]), '{}'.format(C상위4개국['출원인국가코드'][3])]
+    C상위다출원국가.columns = ['출원연도', '{}'.format(C상위4개국['출원인국가코드'][0]), '{}'.format(C상위4개국['출원인국가코드'][1]), '{}'.format(C상위4개국['출원인국가코드'][2]), '{}'.format(C상위4개국['출원인국가코드'][3])]
 
-    return C상위다출원국가KR
-
-#
-def JP상위다출원국가():
-    Rawdata = pd.read_excel(loadpath)
-
-    #데이터정리
-    Ccondition1 = (Rawdata['출원국가코드'] == 'JP')
-    C출원국가data = Rawdata[Ccondition1]
-    C출원국가코드counts = C출원국가data['출원인국가코드'].value_counts()
-    C상위4개국 = C출원국가코드counts.reset_index()
-    C상위4개국.columns = ['출원인국가코드', '출원건수']
-    # 상위 4개국
-    C상위4개국 = C상위4개국.sort_values(by='출원건수', ascending = False).head(4)
-
-    C국가코드list = list(C상위4개국['출원인국가코드'][0:])
-    for country2 in C국가코드list:
-        Ccondition2 = (C출원국가data['출원인국가코드'] == country2)
-        C출원인국가data = C출원국가data[Ccondition2]
-        C출원인국가data = C출원인국가data[['출원연도','출원인국가코드']]
-        C출원연도counts = C출원인국가data['출원연도'].value_counts()
-        C그래프data2 = C출원연도counts.reset_index()
-        C그래프data2.columns = ['출원연도','출원건수']
-        C그래프data2 = C그래프data2.sort_values(by='출원연도', ascending = True)
-        C그래프data21 = pd.merge(출원연도list, C그래프data2, on='출원연도', how='left')
-        C그래프data22 = C그래프data21.replace(np.nan, 0, regex=True)
-        setattr(mod, 'setattr2{}'.format(country2), C그래프data22)
-
-    C그래프1 = getattr(mod, 'setattr2{}'.format(C상위4개국['출원인국가코드'][0]))
-    C그래프2 = getattr(mod, 'setattr2{}'.format(C상위4개국['출원인국가코드'][1]))
-    C그래프3 = getattr(mod, 'setattr2{}'.format(C상위4개국['출원인국가코드'][2]))
-    C그래프4 = getattr(mod, 'setattr2{}'.format(C상위4개국['출원인국가코드'][3]))
-
-    C그래프merge1 = pd.merge(C그래프1, C그래프2, on = '출원연도', how = 'left')
-    C그래프merge2 = pd.merge(C그래프merge1, C그래프3, on = '출원연도', how = 'left')
-    C상위다출원국가JP = pd.merge(C그래프merge2, C그래프4, on = '출원연도', how = 'left')
-
-    C상위다출원국가JP.columns = ['출원연도', '{}'.format(C상위4개국['출원인국가코드'][0]), '{}'.format(C상위4개국['출원인국가코드'][1]), '{}'.format(C상위4개국['출원인국가코드'][2]), '{}'.format(C상위4개국['출원인국가코드'][3])]
-
-    return C상위다출원국가JP
-
-#
-def US상위다출원국가():
-    Rawdata = pd.read_excel(loadpath)
-
-    #데이터정리
-    Ccondition1 = (Rawdata['출원국가코드'] == 'US')
-    C출원국가data = Rawdata[Ccondition1]
-    C출원국가코드counts = C출원국가data['출원인국가코드'].value_counts()
-    C상위4개국 = C출원국가코드counts.reset_index()
-    C상위4개국.columns = ['출원인국가코드', '출원건수']
-    # 상위 4개국
-    C상위4개국 = C상위4개국.sort_values(by='출원건수', ascending = False).head(4)
-
-    C국가코드list = list(C상위4개국['출원인국가코드'][0:])
-    for country2 in C국가코드list:
-        Ccondition2 = (C출원국가data['출원인국가코드'] == country2)
-        C출원인국가data = C출원국가data[Ccondition2]
-        C출원인국가data = C출원인국가data[['출원연도','출원인국가코드']]
-        C출원연도counts = C출원인국가data['출원연도'].value_counts()
-        C그래프data2 = C출원연도counts.reset_index()
-        C그래프data2.columns = ['출원연도','출원건수']
-        C그래프data2 = C그래프data2.sort_values(by='출원연도', ascending = True)
-        C그래프data21 = pd.merge(출원연도list, C그래프data2, on='출원연도', how='left')
-        C그래프data22 = C그래프data21.replace(np.nan, 0, regex=True)
-        setattr(mod, 'setattr2{}'.format(country2), C그래프data22)
-
-    C그래프1 = getattr(mod, 'setattr2{}'.format(C상위4개국['출원인국가코드'][0]))
-    C그래프2 = getattr(mod, 'setattr2{}'.format(C상위4개국['출원인국가코드'][1]))
-    C그래프3 = getattr(mod, 'setattr2{}'.format(C상위4개국['출원인국가코드'][2]))
-    C그래프4 = getattr(mod, 'setattr2{}'.format(C상위4개국['출원인국가코드'][3]))
-
-    C그래프merge1 = pd.merge(C그래프1, C그래프2, on = '출원연도', how = 'left')
-    C그래프merge2 = pd.merge(C그래프merge1, C그래프3, on = '출원연도', how = 'left')
-    C상위다출원국가US = pd.merge(C그래프merge2, C그래프4, on = '출원연도', how = 'left')
-
-    C상위다출원국가US.columns = ['출원연도', '{}'.format(C상위4개국['출원인국가코드'][0]), '{}'.format(C상위4개국['출원인국가코드'][1]), '{}'.format(C상위4개국['출원인국가코드'][2]), '{}'.format(C상위4개국['출원인국가코드'][3])]
-
-    return C상위다출원국가US
-
-#
-def EP상위다출원국가():
-    Rawdata = pd.read_excel(loadpath)
-
-    #데이터정리
-    Ccondition1 = (Rawdata['출원국가코드'] == 'EP')
-    C출원국가data = Rawdata[Ccondition1]
-    C출원국가코드counts = C출원국가data['출원인국가코드'].value_counts()
-    C상위4개국 = C출원국가코드counts.reset_index()
-    C상위4개국.columns = ['출원인국가코드', '출원건수']
-    # 상위 4개국
-    C상위4개국 = C상위4개국.sort_values(by='출원건수', ascending = False).head(4)
-
-    C국가코드list = list(C상위4개국['출원인국가코드'][0:])
-    for country2 in C국가코드list:
-        Ccondition2 = (C출원국가data['출원인국가코드'] == country2)
-        C출원인국가data = C출원국가data[Ccondition2]
-        C출원인국가data = C출원인국가data[['출원연도','출원인국가코드']]
-        C출원연도counts = C출원인국가data['출원연도'].value_counts()
-        C그래프data2 = C출원연도counts.reset_index()
-        C그래프data2.columns = ['출원연도','출원건수']
-        C그래프data2 = C그래프data2.sort_values(by='출원연도', ascending = True)
-        C그래프data21 = pd.merge(출원연도list, C그래프data2, on='출원연도', how='left')
-        C그래프data22 = C그래프data21.replace(np.nan, 0, regex=True)
-        setattr(mod, 'setattr2{}'.format(country2), C그래프data22)
-
-    C그래프1 = getattr(mod, 'setattr2{}'.format(C상위4개국['출원인국가코드'][0]))
-    C그래프2 = getattr(mod, 'setattr2{}'.format(C상위4개국['출원인국가코드'][1]))
-    C그래프3 = getattr(mod, 'setattr2{}'.format(C상위4개국['출원인국가코드'][2]))
-    C그래프4 = getattr(mod, 'setattr2{}'.format(C상위4개국['출원인국가코드'][3]))
-
-    C그래프merge1 = pd.merge(C그래프1, C그래프2, on = '출원연도', how = 'left')
-    C그래프merge2 = pd.merge(C그래프merge1, C그래프3, on = '출원연도', how = 'left')
-    C상위다출원국가EP = pd.merge(C그래프merge2, C그래프4, on = '출원연도', how = 'left')
-
-    C상위다출원국가EP.columns = ['출원연도', '{}'.format(C상위4개국['출원인국가코드'][0]), '{}'.format(C상위4개국['출원인국가코드'][1]), '{}'.format(C상위4개국['출원인국가코드'][2]), '{}'.format(C상위4개국['출원인국가코드'][3])]
-
-    return C상위다출원국가EP
+    return C상위다출원국가
