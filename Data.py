@@ -120,3 +120,32 @@ def 상위다출원국가(code):
     C상위다출원국가.columns = ['출원연도', '{}'.format(C상위4개국['출원인국가코드'][0]), '{}'.format(C상위4개국['출원인국가코드'][1]), '{}'.format(C상위4개국['출원인국가코드'][2]), '{}'.format(C상위4개국['출원인국가코드'][3])]
 
     return C상위다출원국가
+
+# 기술분류 개수에 따라 다른 메소드, 체크방식 도입
+def 기술분류():
+    Rawdata = pd.read_excel(loadpath)
+    D기술분류list = list(Rawdata['기술분류'])
+    D기술분류list중복제거 = set(D기술분류list)
+
+    for classification in D기술분류list중복제거['기술분류']:
+        Dcondition = (Rawdata['기술분류'] == classification)
+        D분류data = Rawdata[Dcondition]
+        D출원연도counts = D분류data['출원연도'].value_counts()
+        D출원연도data = D출원연도counts.reset_index()
+        D출원연도data.columns = ['출원연도', '출원건수']
+        D그래프data2 = pd.merge(출원연도list, D출원연도data, on='출원연도', how='left')
+        D그래프data2 = D그래프data2.replace(np.nan, 0, regex=True)
+        setattr(mod, 'setattr3{}'.format(classification), D그래프data2)
+
+    D그래프1 = getattr(mod, 'setattr3{}'.format(D기술분류list중복제거['기술분류'][0]))
+    D그래프2 = getattr(mod, 'setattr3{}'.format(D기술분류list중복제거['기술분류'][1]))
+    D그래프3 = getattr(mod, 'setattr3{}'.format(D기술분류list중복제거['기술분류'][2]))
+    D그래프4 = getattr(mod, 'setattr3{}'.format(D기술분류list중복제거['기술분류'][3]))
+
+    D그래프merge1 = pd.merge(D그래프1, D그래프2, on = '출원연도', how = 'left')
+    D그래프merge2 = pd.merge(D그래프merge1, D그래프3, on = '출원연도', how = 'left')
+    D그래프data = pd.merge(D그래프merge2, D그래프4, on = '출원연도', how = 'left')
+
+    D그래프data.columns = ['출원연도', '{}'.format(D기술분류list중복제거['기술분류'][0]), '{}'.format(D기술분류list중복제거['기술분류'][1]), '{}'.format(D기술분류list중복제거['기술분류'][2]), '{}'.format(D기술분류list중복제거['기술분류'][3])]
+    
+    return D그래프data
