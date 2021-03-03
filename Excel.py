@@ -13,8 +13,8 @@ def ExcelGraph():
     A()
     B()
     C()
-    # if rb > 1:
-    #     D()
+    if Data.rb > 1:
+        D()
 
 def A():
     sheetA = wb.create_sheet('전체 출원동향', 0)
@@ -265,20 +265,34 @@ def C():
     chartC42.dLbls.showPercent = True
     sheetC.add_chart(chartC42, 'M70')
 
-# def D():
-#     sheetD = wb.create_sheet('기술분류별 출원동향', 3)
-#     D그래프data = Data.기술분류()
-#     for r in dataframe_to_rows(D그래프data, index=False, header=True):
-#         sheetD.append(r)
-#     # if main.radio == 2:
+    wb.save('{}.xlsx'.format(savepath))
+    tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료(기술분류X)')
 
+def D():
+    sheetD = wb.create_sheet('기술분류별 출원동향', 3)
+    D그래프data = Data.기술분류()
+    for r in dataframe_to_rows(D그래프data, index=False, header=True):
+        sheetD.append(r)
 
+    sheetD.insert_cols(2)
+    for row, cellobj in enumerate(list(sheetD.columns)[1]):
+        n = '=right(A%d,2)' % (row+1)
+        cellobj.value = n
 
+    sheetD['B22'] = '합계'
+    sheetD['C22'] = '=SUM(C2:C21)'
+    sheetD['D22'] = '=SUM(D2:D21)'
+    sheetD['E22'] = '=SUM(E2:E21)'
+    sheetD['F22'] = '=SUM(F2:F21)'
+
+    if Data.rb == 2:
+        chartD11 = LineChart()
+        
 
 
 
 
 
     wb.save('{}.xlsx'.format(savepath))
-    tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료')
+    tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료(기술분류O)')
     
