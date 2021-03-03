@@ -1,4 +1,3 @@
-from tkinter.constants import NONE
 from openpyxl.chart.shapes import GraphicalProperties
 from openpyxl.drawing.line import LineProperties
 from openpyxl.utils.dataframe import dataframe_to_rows
@@ -14,7 +13,8 @@ def ExcelGraph():
     A()
     B()
     C()
-
+    # if rb > 1:
+    #     D()
 
 def A():
     sheetA = wb.create_sheet('전체 출원동향', 0)
@@ -265,7 +265,20 @@ def C():
     chartC42.dLbls.showPercent = True
     sheetC.add_chart(chartC42, 'M70')
 
+# def D():
+#     sheetD = wb.create_sheet('기술분류별 출원동향', 3)
+#     D그래프data = Data.기술분류()
+#     for r in dataframe_to_rows(D그래프data, index=False, header=True):
+#         sheetD.append(r)
+#     # if main.radio == 2:
+
+
+
+
+
+
+
+
     wb.save('{}.xlsx'.format(savepath))
     tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료')
-
     

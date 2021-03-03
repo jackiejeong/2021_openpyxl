@@ -37,6 +37,7 @@ def Save():
 #
 def 전체출원동향():
     global loadpath
+    global Rawdata
     loadpath = Load()
     Rawdata = pd.read_excel(loadpath)
 
@@ -54,7 +55,6 @@ def 전체출원동향():
 
 #
 def 주요국출원동향():
-    Rawdata = pd.read_excel(loadpath)
 
     #데이터정리(한국, 일본, 미국, 유럽만 해당)
     B국가연도data = Rawdata[['출원국가코드', '출원연도']]
@@ -84,7 +84,6 @@ def 주요국출원동향():
 
 #
 def 상위다출원국가(code):
-    Rawdata = pd.read_excel(loadpath)
 
     #데이터정리
     Ccondition1 = (Rawdata['출원국가코드'] == code)
@@ -103,7 +102,6 @@ def 상위다출원국가(code):
         C출원연도counts = C출원인국가data['출원연도'].value_counts()
         C그래프data2 = C출원연도counts.reset_index()
         C그래프data2.columns = ['출원연도','출원건수']
-        C그래프data2 = C그래프data2.sort_values(by='출원연도', ascending = True)
         C그래프data21 = pd.merge(출원연도list, C그래프data2, on='출원연도', how='left')
         C그래프data22 = C그래프data21.replace(np.nan, 0, regex=True)
         setattr(mod, 'setattr2{}'.format(country2), C그래프data22)
@@ -118,34 +116,50 @@ def 상위다출원국가(code):
     C상위다출원국가 = pd.merge(C그래프merge2, C그래프4, on = '출원연도', how = 'left')
 
     C상위다출원국가.columns = ['출원연도', '{}'.format(C상위4개국['출원인국가코드'][0]), '{}'.format(C상위4개국['출원인국가코드'][1]), '{}'.format(C상위4개국['출원인국가코드'][2]), '{}'.format(C상위4개국['출원인국가코드'][3])]
-
-    return C상위다출원국가
+    C그래프data = C상위다출원국가.sort_values(by='출원연도', ascending = True)
+    return C그래프data
 
 # 기술분류 개수에 따라 다른 메소드, 체크방식 도입
-def 기술분류():
-    Rawdata = pd.read_excel(loadpath)
-    D기술분류list = list(Rawdata['기술분류'])
-    D기술분류list중복제거 = set(D기술분류list)
+# def 기술분류():
+#     D기술분류counts = Rawdata['기술분류'].value_counts()
+#     D기술분류data = D기술분류counts.reset_index()
+#     D기술분류data.columns = ['기술분류', '출원건수']
 
-    for classification in D기술분류list중복제거['기술분류']:
-        Dcondition = (Rawdata['기술분류'] == classification)
-        D분류data = Rawdata[Dcondition]
-        D출원연도counts = D분류data['출원연도'].value_counts()
-        D출원연도data = D출원연도counts.reset_index()
-        D출원연도data.columns = ['출원연도', '출원건수']
-        D그래프data2 = pd.merge(출원연도list, D출원연도data, on='출원연도', how='left')
-        D그래프data2 = D그래프data2.replace(np.nan, 0, regex=True)
-        setattr(mod, 'setattr3{}'.format(classification), D그래프data2)
+#     for classification in D기술분류data['기술분류']:
+#         Dcondition = (Rawdata['기술분류'] == classification)
+#         D분류data = Rawdata[Dcondition]
+#         D출원연도counts = D분류data['출원연도'].value_counts()
+#         D출원연도data = D출원연도counts.reset_index()
+#         D출원연도data.columns = ['출원연도', '출원건수']
+#         D그래프data2 = pd.merge(출원연도list, D출원연도data, on='출원연도', how='left')
+#         D그래프data2 = D그래프data2.replace(np.nan, 0, regex=True)
+#         setattr(mod, 'setattr3{}'.format(classification), D그래프data2)
 
-    D그래프1 = getattr(mod, 'setattr3{}'.format(D기술분류list중복제거['기술분류'][0]))
-    D그래프2 = getattr(mod, 'setattr3{}'.format(D기술분류list중복제거['기술분류'][1]))
-    D그래프3 = getattr(mod, 'setattr3{}'.format(D기술분류list중복제거['기술분류'][2]))
-    D그래프4 = getattr(mod, 'setattr3{}'.format(D기술분류list중복제거['기술분류'][3]))
+#     if rb == 2:
+#         D그래프1 = getattr(mod, 'setattr3{}'.format(D기술분류data['기술분류'][0]))
+#         D그래프2 = getattr(mod, 'setattr3{}'.format(D기술분류data['기술분류'][1]))
+#         D그래프data = pd.merge(D그래프1, D그래프2, on = '출원연도', how = 'left')
+#         D그래프data.columns = ['출원연도', '{}'.format(D기술분류data['기술분류'][0]), '{}'.format(D기술분류data['기술분류'][1])]
+#         return D그래프data
 
-    D그래프merge1 = pd.merge(D그래프1, D그래프2, on = '출원연도', how = 'left')
-    D그래프merge2 = pd.merge(D그래프merge1, D그래프3, on = '출원연도', how = 'left')
-    D그래프data = pd.merge(D그래프merge2, D그래프4, on = '출원연도', how = 'left')
+#     elif rb == 3:
+#         D그래프1 = getattr(mod, 'setattr3{}'.format(D기술분류data['기술분류'][0]))
+#         D그래프2 = getattr(mod, 'setattr3{}'.format(D기술분류data['기술분류'][1]))
+#         D그래프3 = getattr(mod, 'setattr3{}'.format(D기술분류data['기술분류'][2])) 
+#         D그래프merge1 = pd.merge(D그래프1, D그래프2, on = '출원연도', how = 'left')
+#         D그래프merge2 = pd.merge(D그래프merge1, D그래프3, on = '출원연도', how = 'left')
+#         D그래프merge2.columns = ['출원연도', '{}'.format(D기술분류data['기술분류'][0]), '{}'.format(D기술분류data['기술분류'][1]), '{}'.format(D기술분류data['기술분류'][2])]
+#         D그래프data = D그래프merge2.sort_values(by='출원연도', ascending = True)
+#         return D그래프data
 
-    D그래프data.columns = ['출원연도', '{}'.format(D기술분류list중복제거['기술분류'][0]), '{}'.format(D기술분류list중복제거['기술분류'][1]), '{}'.format(D기술분류list중복제거['기술분류'][2]), '{}'.format(D기술분류list중복제거['기술분류'][3])]
-    
-    return D그래프data
+#     elif rb == 4:
+#         D그래프1 = getattr(mod, 'setattr3{}'.format(D기술분류data['기술분류'][0]))
+#         D그래프2 = getattr(mod, 'setattr3{}'.format(D기술분류data['기술분류'][1]))
+#         D그래프3 = getattr(mod, 'setattr3{}'.format(D기술분류data['기술분류'][2]))
+#         D그래프4 = getattr(mod, 'setattr3{}'.format(D기술분류data['기술분류'][3]))
+#         D그래프merge1 = pd.merge(D그래프1, D그래프2, on = '출원연도', how = 'left')
+#         D그래프merge2 = pd.merge(D그래프merge1, D그래프3, on = '출원연도', how = 'left')
+#         D그래프data = pd.merge(D그래프merge2, D그래프4, on = '출원연도', how = 'left')
+#         D그래프data.columns = ['출원연도', '{}'.format(D기술분류data['기술분류'][0]), '{}'.format(D기술분류data['기술분류'][1]), '{}'.format(D기술분류data['기술분류'][2]), '{}'.format(D기술분류data['기술분류'][3])]
+#         D그래프data = D그래프data.sort_values(by='출원연도', ascending = True)
+#         return D그래프data
