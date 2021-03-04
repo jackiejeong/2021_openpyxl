@@ -2,7 +2,7 @@ from openpyxl.chart.shapes import GraphicalProperties
 from openpyxl.drawing.line import LineProperties
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl import Workbook
-from openpyxl.chart import (LineChart, BarChart, PieChart, Reference, Series, reference)
+from openpyxl.chart import (LineChart, BarChart, PieChart, Reference, Series, reference, title)
 from openpyxl.chart.label import DataLabelList
 import tkinter.messagebox
 import Data
@@ -13,9 +13,10 @@ def ExcelGraph():
     A()
     B()
     C()
-    if Data.rb > 1:
-        D()
-    E()
+    D()
+    # E()
+    # if Data.rb > 1:
+    #     F()
     
 def A():
     sheetA = wb.create_sheet('전체 출원동향', 0)
@@ -144,7 +145,7 @@ def C():
     sheetC['F22'] = '=SUM(F2:F21)'
     sheetC['A23'] = ' '
 
-    sheetC['B44'] = '합계'
+    sheetC['B45'] = '합계'
     sheetC['C45'] = '=SUM(C25:C44)'
     sheetC['D45'] = '=SUM(D25:D44)'
     sheetC['E45'] = '=SUM(E25:E44)'
@@ -271,124 +272,262 @@ def C():
     #     tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료(기술분류X)')
 
 def D():
-    sheetD = wb.create_sheet('기술분류별 출원동향', 3)
-    D그래프data = Data.기술분류()
-    for r in dataframe_to_rows(D그래프data, index=False, header=True):
+    sheetD = wb.create_sheet('주요국 내외국인 출원점유율', 3)
+    D그래프data1 = Data.내외국인점유율()
+    for r in dataframe_to_rows(D그래프data1, index=False, header=True):
+        sheetD.append(r)
+    sheetD['A4'] = '합계'
+    sheetD['B4'] = '=SUM(B2:B3)'
+    sheetD['C4'] = '=SUM(C2:C3)'
+    sheetD['D4'] = '=SUM(D2:D3)'
+    sheetD['E4'] = '=SUM(E2:E3)'
+    sheetD['A5'] = ' '
+
+    D그래프data2 = Data.외국인점유율()
+    for r in dataframe_to_rows(D그래프data2, index=False, header=True):
         sheetD.append(r)
 
-    sheetD.insert_cols(2)
-    for row, cellobj in enumerate(list(sheetD.columns)[1]):
-        n = '=right(A%d,2)' % (row+1)
-        cellobj.value = n
+    # 전체 그래프
+    chartD1 = PieChart()
+    dataD1 = Reference(sheetD, min_col = 2, min_row = 4, max_col = 5)
+    labelD1 = Reference(sheetD, min_col = 2, min_row = 1, max_col = 5)
+    chartD1.add_data(dataD1, from_rows = 4, titles_from_data = False)
+    chartD1.set_categories(labelD1)
+    chartD1.width = 8
+    chartD1.height = 8
+    chartD1.legend = None
+    chartD1.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+    chartD1.dLbls = DataLabelList()
+    chartD1.dLbls.showPercent = True
+    chartD1.dLbls.showCatName = True
+    sheetD.add_chart(chartD1, 'P2')
 
-    sheetD['B22'] = '합계'
-    sheetD['C22'] = '=SUM(C2:C21)'
-    sheetD['D22'] = '=SUM(D2:D21)'
-    sheetD['E22'] = '=SUM(E2:E21)'
-    sheetD['F22'] = '=SUM(F2:F21)'
+    # KR 그래프
+    chartD2 = PieChart()
+    dataD2 = Reference(sheetD, min_col = 2, min_row = 2, max_row = 3)
+    labelD2 = Reference(sheetD, min_col = 1, min_row = 2, max_row = 3)
+    chartD2.add_data(dataD2, titles_from_data = False)
+    chartD2.set_categories(labelD2)
+    chartD2.width = 6.5
+    chartD2.height = 6.5
+    chartD2.legend = None
+    chartD2.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+    chartD2.dLbls = DataLabelList()
+    chartD2.dLbls.showPercent = True
+    chartD2.dLbls.showCatName = True
+    sheetD.add_chart(chartD2, 'K18')
 
-    if Data.rb == 2:
-        chartD11 = LineChart()
-        dataD11 = Reference(sheetD, min_col = 3, min_row = 1, max_col = 4, max_row = 21)
-        catsD11 = Reference(sheetD, min_col = 2, min_row = 2, max_row = 21)
-        chartD11.add_data(dataD11, titles_from_data = True)
-        chartD11.set_categories(catsD11)
-        chartD11.y_axis.majorGridlines = None
-        chartD11.width = 15
-        chartD11.height = 10
-        chartD11.legend.position = 't'
-        chartD11.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
-        sheetD.add_chart(chartD11, 'H2')
-        
-        chartD12 = PieChart()
-        dataD12 = Reference(sheetD, min_col = 3, min_row = 22, max_col = 4)
-        labelD12 = Reference(sheetD, min_col = 3, min_row = 1, max_col = 4)
-        chartD12.add_data(dataD12, from_rows = 22, titles_from_data = False)
-        chartD12.set_categories(labelD12)
-        chartD12.width = 5
-        chartD12.height = 5
-        chartD12.legend = None
-        chartD12.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
-        chartD12.dLbls = DataLabelList()
-        chartD12.dLbls.showPercent = True
-        sheetD.add_chart(chartD12, 'M1')
+    # JP 그래프
+    chartD3 = PieChart()
+    dataD3 = Reference(sheetD, min_col = 3, min_row = 2, max_row = 3)
+    labelD3 = Reference(sheetD, min_col = 1, min_row = 2, max_row = 3)
+    chartD3.add_data(dataD3, titles_from_data = False)
+    chartD3.set_categories(labelD3)
+    chartD3.width = 6.5
+    chartD3.height = 6.5
+    chartD3.legend = None
+    chartD3.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+    chartD3.dLbls = DataLabelList()
+    chartD3.dLbls.showPercent = True
+    chartD3.dLbls.showCatName = True
+    sheetD.add_chart(chartD3, 'O18')
 
-        # wb.save('{}.xlsx'.format(savepath))
-        # tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료(기술분류 2개)')
+    # US 그래프
+    chartD4 = PieChart()
+    dataD4 = Reference(sheetD, min_col = 4, min_row = 2, max_row = 3)
+    labelD4 = Reference(sheetD, min_col = 1, min_row = 2, max_row = 3)
+    chartD4.add_data(dataD4, titles_from_data = False)
+    chartD4.set_categories(labelD4)
+    chartD4.width = 6.5
+    chartD4.height = 6.5
+    chartD4.legend = None
+    chartD4.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+    chartD4.dLbls = DataLabelList()
+    chartD4.dLbls.showPercent = True
+    chartD4.dLbls.showCatName = True
+    sheetD.add_chart(chartD4, 'S18')
 
-    elif Data.rb == 3:
-        chartD11 = LineChart()
-        dataD11 = Reference(sheetD, min_col = 3, min_row = 1, max_col = 5, max_row = 21)
-        catsD11 = Reference(sheetD, min_col = 2, min_row = 2, max_row = 21)
-        chartD11.add_data(dataD11, titles_from_data = True)
-        chartD11.set_categories(catsD11)
-        chartD11.y_axis.majorGridlines = None
-        chartD11.width = 15
-        chartD11.height = 10
-        chartD11.legend.position = 't'
-        chartD11.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
-        sheetD.add_chart(chartD11, 'H2')
-        
-        chartD12 = PieChart()
-        dataD12 = Reference(sheetD, min_col = 3, min_row = 22, max_col = 5)
-        labelD12 = Reference(sheetD, min_col = 3, min_row = 1, max_col = 5)
-        chartD12.add_data(dataD12, from_rows = 22, titles_from_data = False)
-        chartD12.set_categories(labelD12)
-        chartD12.width = 5
-        chartD12.height = 5
-        chartD12.legend = None
-        chartD12.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
-        chartD12.dLbls = DataLabelList()
-        chartD12.dLbls.showPercent = True
-        sheetD.add_chart(chartD12, 'M1')
+    # EP 그래프
+    chartD5 = PieChart()
+    dataD5 = Reference(sheetD, min_col = 5, min_row = 2, max_row = 3)
+    labelD5 = Reference(sheetD, min_col = 1, min_row = 2, max_row = 3)
+    chartD5.add_data(dataD5, titles_from_data = False)
+    chartD5.set_categories(labelD5)
+    chartD5.width = 6.5
+    chartD5.height = 6.5
+    chartD5.legend = None
+    chartD5.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+    chartD5.dLbls = DataLabelList()
+    chartD5.dLbls.showPercent = True
+    chartD5.dLbls.showCatName = True
+    sheetD.add_chart(chartD5, 'W18')
 
-        # wb.save('{}.xlsx'.format(savepath))
-        # tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료(기술분류 3개)')
+    # KR 외국인 그래프(상위 4개국)
+    chartD6 = PieChart()
+    dataD6 = Reference(sheetD, min_col = 2, min_row = 7, max_row = 10)
+    labelD6 = Reference(sheetD, min_col = 1, min_row = 7, max_row = 10)
+    chartD6.add_data(dataD6, titles_from_data = False)
+    chartD6.set_categories(labelD6)
+    chartD6.width = 6.5
+    chartD6.height = 6.5
+    chartD6.legend = None
+    chartD6.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+    chartD6.dLbls = DataLabelList()
+    chartD6.dLbls.showPercent = True
+    chartD6.dLbls.showCatName = True
+    sheetD.add_chart(chartD6, 'K31')
 
-    elif Data.rb == 4:
-        chartD11 = LineChart()
-        dataD11 = Reference(sheetD, min_col = 3, min_row = 1, max_col = 6, max_row = 21)
-        catsD11 = Reference(sheetD, min_col = 2, min_row = 2, max_row = 21)
-        chartD11.add_data(dataD11, titles_from_data = True)
-        chartD11.set_categories(catsD11)
-        chartD11.y_axis.majorGridlines = None
-        chartD11.width = 15
-        chartD11.height = 10
-        chartD11.legend.position = 't'
-        chartD11.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
-        sheetD.add_chart(chartD11, 'H2')
-        
-        chartD12 = PieChart()
-        dataD12 = Reference(sheetD, min_col = 3, min_row = 22, max_col = 6)
-        labelD12 = Reference(sheetD, min_col = 3, min_row = 1, max_col = 6)
-        chartD12.add_data(dataD12, from_rows = 22, titles_from_data = False)
-        chartD12.set_categories(labelD12)
-        chartD12.width = 5
-        chartD12.height = 5
-        chartD12.legend = None
-        chartD12.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
-        chartD12.dLbls = DataLabelList()
-        chartD12.dLbls.showPercent = True
-        sheetD.add_chart(chartD12, 'M1')
+    # JP 외국인 그래프(상위 4개국)
+    chartD7 = PieChart()
+    dataD7 = Reference(sheetD, min_col = 4, min_row = 7, max_row = 10)
+    labelD7 = Reference(sheetD, min_col = 3, min_row = 7, max_row = 10)
+    chartD7.add_data(dataD7, titles_from_data = False)
+    chartD7.set_categories(labelD7)
+    chartD7.width = 6.5
+    chartD7.height = 6.5
+    chartD7.legend = None
+    chartD7.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+    chartD7.dLbls = DataLabelList()
+    chartD7.dLbls.showPercent = True
+    chartD7.dLbls.showCatName = True
+    sheetD.add_chart(chartD7, 'O31')
 
-        # wb.save('{}.xlsx'.format(savepath))
-        # tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료(기술분류 4개)')
+    # US 외국인 그래프(상위 4개국)
+    chartD8 = PieChart()
+    dataD8 = Reference(sheetD, min_col = 6, min_row = 7, max_row = 10)
+    labelD8 = Reference(sheetD, min_col = 5, min_row = 7, max_row = 10)
+    chartD8.add_data(dataD8, titles_from_data = False)
+    chartD8.set_categories(labelD8)
+    chartD8.width = 6.5
+    chartD8.height = 6.5
+    chartD8.legend = None
+    chartD8.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+    chartD8.dLbls = DataLabelList()
+    chartD8.dLbls.showPercent = True
+    chartD8.dLbls.showCatName = True
+    sheetD.add_chart(chartD8, 'S31')
 
-def E():
-    sheetE = wb.create_sheet('주요국 내외국인 출원점유율', 4)
-    E그래프data1 = Data.내외국인점유율()
-    for r in dataframe_to_rows(E그래프data1, index=False, header=True):
-        sheetE.append(r)
-    sheetE['A4'] = '합계'
-    sheetE['B4'] = '=SUM(B2:B3)'
-    sheetE['C4'] = '=SUM(C2:C3)'
-    sheetE['D4'] = '=SUM(D2:D3)'
-    sheetE['E4'] = '=SUM(E2:E3)'
-    sheetE['A5'] = ' '
-
-    E그래프data2 = Data.외국인점유율()
-    for r in dataframe_to_rows(E그래프data2, index=False, header=True):
-        sheetE.append(r)
+    # EP 외국인 그래프(상위 4개국)
+    chartD9 = PieChart()
+    dataD9 = Reference(sheetD, min_col = 8, min_row = 7, max_row = 10)
+    labelD9 = Reference(sheetD, min_col = 7, min_row = 7, max_row = 10)
+    chartD9.add_data(dataD9, titles_from_data = False)
+    chartD9.set_categories(labelD9)
+    chartD9.width = 6.5
+    chartD9.height = 6.5
+    chartD9.legend = None
+    chartD9.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+    chartD9.dLbls = DataLabelList()
+    chartD9.dLbls.showPercent = True
+    chartD9.dLbls.showCatName = True
+    sheetD.add_chart(chartD9, 'W31')
 
     wb.save('{}.xlsx'.format(savepath))
     tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료')
+
+
+
+
+# def F():
+#     sheetF = wb.create_sheet('기술분류별 출원동향', ?)
+#     F그래프data = Data.기술분류()
+#     for r in dataframe_to_rows(F그래프data, index=False, header=True):
+#         sheetF.append(r)
+
+#     sheetF.insert_cols(2)
+#     for row, cellobj in enumerate(list(sheetF.columns)[1]):
+#         n = '=right(A%d,2)' % (row+1)
+#         cellobj.value = n
+
+#     sheetF['B22'] = '합계'
+#     sheetF['C22'] = '=SUM(C2:C21)'
+#     sheetF['D22'] = '=SUM(D2:D21)'
+#     sheetF['E22'] = '=SUM(E2:E21)'
+#     sheetF['F22'] = '=SUM(F2:F21)'
+
+#     if Data.rb == 2:
+#         chartF11 = LineChart()
+#         dataF11 = Reference(sheetF, min_col = 3, min_row = 1, max_col = 4, max_row = 21)
+#         catsF11 = Reference(sheetF, min_col = 2, min_row = 2, max_row = 21)
+#         chartF11.add_data(dataF11, titles_from_data = True)
+#         chartF11.set_categories(catsF11)
+#         chartF11.y_axis.majorGridlines = None
+#         chartF11.width = 15
+#         chartF11.height = 10
+#         chartF11.legend.position = 't'
+#         chartF11.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+#         sheetF.add_chart(chartF11, 'H2')
+        
+#         chartF12 = PieChart()
+#         dataF12 = Reference(sheetF, min_col = 3, min_row = 22, max_col = 4)
+#         labelF12 = Reference(sheetF, min_col = 3, min_row = 1, max_col = 4)
+#         chartF12.add_data(dataF12, from_rows = 22, titles_from_data = False)
+#         chartF12.set_categories(labelF12)
+#         chartF12.width = 5
+#         chartF12.height = 5
+#         chartF12.legend = None
+#         chartF12.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+#         chartF12.dLbls = DataLabelList()
+#         chartF12.dLbls.showPercent = True
+#         sheetF.add_chart(chartF12, 'M1')
+
+#         # wb.save('{}.xlsx'.format(savepath))
+#         # tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료(기술분류 2개)')
+
+#     elif Data.rb == 3:
+#         chartF11 = LineChart()
+#         dataF11 = Reference(sheetF, min_col = 3, min_row = 1, max_col = 5, max_row = 21)
+#         catsF11 = Reference(sheetF, min_col = 2, min_row = 2, max_row = 21)
+#         chartF11.add_data(dataF11, titles_from_data = True)
+#         chartF11.set_categories(catsF11)
+#         chartF11.y_axis.majorGridlines = None
+#         chartF11.width = 15
+#         chartF11.height = 10
+#         chartF11.legend.position = 't'
+#         chartF11.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+#         sheetF.add_chart(chartF11, 'H2')
+        
+#         chartF12 = PieChart()
+#         dataF12 = Reference(sheetF, min_col = 3, min_row = 22, max_col = 5)
+#         labelF12 = Reference(sheetF, min_col = 3, min_row = 1, max_col = 5)
+#         chartF12.add_data(dataF12, from_rows = 22, titles_from_data = False)
+#         chartF12.set_categories(labelF12)
+#         chartF12.width = 5
+#         chartF12.height = 5
+#         chartF12.legend = None
+#         chartF12.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+#         chartF12.dLbls = DataLabelList()
+#         chartF12.dLbls.showPercent = True
+#         sheetF.add_chart(chartF12, 'M1')
+
+#         # wb.save('{}.xlsx'.format(savepath))
+#         # tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료(기술분류 3개)')
+
+#     elif Data.rb == 4:
+#         chartF11 = LineChart()
+#         dataF11 = Reference(sheetF, min_col = 3, min_row = 1, max_col = 6, max_row = 21)
+#         catsF11 = Reference(sheetF, min_col = 2, min_row = 2, max_row = 21)
+#         chartF11.add_data(dataF11, titles_from_data = True)
+#         chartF11.set_categories(catsF11)
+#         chartF11.y_axis.majorGridlines = None
+#         chartF11.width = 15
+#         chartF11.height = 10
+#         chartF11.legend.position = 't'
+#         chartF11.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+#         sheetF.add_chart(chartF11, 'H2')
+        
+#         chartF12 = PieChart()
+#         dataF12 = Reference(sheetF, min_col = 3, min_row = 22, max_col = 6)
+#         labelF12 = Reference(sheetF, min_col = 3, min_row = 1, max_col = 6)
+#         chartF12.add_data(dataF12, from_rows = 22, titles_from_data = False)
+#         chartF12.set_categories(labelF12)
+#         chartF12.width = 5
+#         chartF12.height = 5
+#         chartF12.legend = None
+#         chartF12.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+#         chartF12.dLbls = DataLabelList()
+#         chartF12.dLbls.showPercent = True
+#         sheetF.add_chart(chartF12, 'M1')
+
+#         # wb.save('{}.xlsx'.format(savepath))
+#         # tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료(기술분류 4개)')
