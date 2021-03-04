@@ -1,3 +1,4 @@
+from tkinter.constants import TRUE
 from numpy.lib.npyio import load
 import tkinter.messagebox
 import pandas as pd
@@ -31,6 +32,9 @@ for year in range(20):
 
 # IP주요국
 주요국 = ['KR', 'JP', 'US', 'EP']
+
+# EP국가
+EP국가 = ['GR', 'NL', 'DK', 'DE', 'LV', 'RO', 'LU', 'LT', 'BE', 'BG', 'CY', 'SE', 'ES', 'SK', 'SI', 'IE', 'EE', 'GB', 'AT', 'IT', 'CZ', 'PT', 'PL', 'FR', 'FI', 'HU']
 
 # 동적 변수 할당 mod
 mod = sys.modules[__name__]
@@ -179,3 +183,57 @@ def 기술분류():
         D그래프data.columns = ['출원연도', '{}'.format(D기술분류data['기술분류'][0]), '{}'.format(D기술분류data['기술분류'][1]), '{}'.format(D기술분류data['기술분류'][2]), '{}'.format(D기술분류data['기술분류'][3])]
         D그래프data = D그래프data.sort_values(by='출원연도', ascending = True)
         return D그래프data
+
+def 내외국인점유율():
+    ERawdata = Rawdata
+    for EP수정 in EP국가:
+        ERawdata['출원인국가코드'] = np.where(ERawdata['출원인국가코드'] == EP수정, 'EP', Rawdata['출원인국가코드'])
+
+    for country in 주요국:
+        Econdition = (ERawdata['출원국가코드'] == country)
+        E주요국data = ERawdata[Econdition]
+        E주요국data['출원인국가코드'] = np.where(E주요국data['출원인국가코드'] == country, '내국인', '외국인')
+        # A value is trying to be set on a copy of a slice from a DataFrame.
+        # Try using .loc[row_indexer,col_indexer] = value instead
+        # See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+        E내외국인counts = E주요국data['출원인국가코드'].value_counts()
+        E내외국인counts = E내외국인counts.reset_index()
+        E내외국인counts.columns = ['분류', '{}'.format(country)]
+        setattr(mod, 'setattr4{}'.format(country), E내외국인counts)
+    
+    E그래프1 = getattr(mod, 'setattr4{}'.format(주요국[0]))
+    E그래프2 = getattr(mod, 'setattr4{}'.format(주요국[1]))
+    E그래프3 = getattr(mod, 'setattr4{}'.format(주요국[2]))
+    E그래프4 = getattr(mod, 'setattr4{}'.format(주요국[3]))
+
+    E그래프merge1 = pd.merge(E그래프1, E그래프2, on = '분류', how = 'left')
+    E그래프merge2 = pd.merge(E그래프merge1, E그래프3, on = '분류', how = 'left')
+    E그래프data1= pd.merge(E그래프merge2, E그래프4, on = '분류', how = 'left')
+    return E그래프data1
+    
+def 외국인점유율():
+    ERawdata = Rawdata
+    for EP수정 in EP국가:
+        ERawdata['출원인국가코드'] = np.where(ERawdata['출원인국가코드'] == EP수정, 'EP', Rawdata['출원인국가코드'])
+
+    for country in 주요국:
+        Econdition = (ERawdata['출원국가코드'] == country)
+        E주요국data = ERawdata[Econdition]
+        E내외국인counts = E주요국data['출원인국가코드'].value_counts()
+        E내외국인counts = E내외국인counts.reset_index()
+        E내외국인counts.columns = ['{}'.format(country), '출원건수']
+        Econdition2 = (E내외국인counts['{}'.format(country)] != country)
+        E외국인data = E내외국인counts[Econdition2]
+        setattr(mod, 'setattr5{}'.format(country), E외국인data)
+
+    E그래프1 = getattr(mod, 'setattr5{}'.format(주요국[0]))
+    E그래프2 = getattr(mod, 'setattr5{}'.format(주요국[1]))
+    E그래프3 = getattr(mod, 'setattr5{}'.format(주요국[2]))
+    E그래프4 = getattr(mod, 'setattr5{}'.format(주요국[3]))
+
+    E그래프merge1 = pd.merge(E그래프1, E그래프2, how = 'inner', left_index = True, right_index = True)
+    E그래프merge2 = pd.merge(E그래프merge1, E그래프3, how = 'inner', left_index = True, right_index = True)
+    E그래프data2= pd.merge(E그래프merge2, E그래프4, how = 'inner', left_index = True, right_index = True)
+    E그래프data2.columns = ['KR', '출원건수', 'JP', '출원건수', 'US', '출원건수', 'EP', '출원건수']
+    return E그래프data2
+
