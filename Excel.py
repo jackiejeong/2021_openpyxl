@@ -425,9 +425,6 @@ def D():
     wb.save('{}.xlsx'.format(savepath))
     tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료')
 
-
-
-
 # def F():
 #     sheetF = wb.create_sheet('기술분류별 출원동향', ?)
 #     F그래프data = Data.기술분류()

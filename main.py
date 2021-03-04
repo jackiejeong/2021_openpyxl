@@ -1,6 +1,5 @@
 import tkinter as tk
-import Preprocessing
-import Excel, Data
+import Excel, Data, Map, Preprocessing
 
 if __name__ == '__main__':
 
@@ -11,7 +10,7 @@ if __name__ == '__main__':
     
     전처리bt = tk.Button(root, text = '데이터 전처리', overrelief = 'solid', width = 10, command = Preprocessing.Prep)
     그래프bt = tk.Button(root, text = '그래프 생성', overrelief = 'solid', width = 10, command = Excel.ExcelGraph)
-    지도bt = tk.Button(root, text = '지도 생성', overrelief = 'solid', width = 10)
+    지도bt = tk.Button(root, text = '지도 생성', overrelief = 'solid', width = 10, command = Map.worldmap)
     초기화bt = tk.Button(root, text = '초기화', overrelief = 'solid', width = 10)
     전처리bt.place(x = 10, y = 20)
     그래프bt.place(x = 10, y = 60)

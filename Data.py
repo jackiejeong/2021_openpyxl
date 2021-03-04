@@ -41,7 +41,7 @@ mod = sys.modules[__name__]
 
 #
 def Load():
-    tkinter.messagebox.showinfo('messagebox', '전처리가 완료된 엑셀 파일을 불러오시오.')
+    tkinter.messagebox.showinfo('messagebox', '전처리된 엑셀 파일을 선택하시오.')
     loadpath = filedialog.askopenfilename(initialdir="/", title="엑셀 파일 선택",
                                           filetypes=(("Excel files","*.xlsx"),
                                           ("all files", "*.*")))
@@ -191,6 +191,12 @@ def 외국인점유율():
     D그래프coacat2 = pd.concat([D그래프coacat1, D그래프3], axis = 1)
     D그래프data2 = pd.concat([D그래프coacat2, D그래프4], axis = 1)
     return D그래프data2
+
+# def 기술성장():
+
+
+
+
 
 # def 기술분류():
 #     F기술분류counts = Rawdata['기술분류'].value_counts()
