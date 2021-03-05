@@ -14,7 +14,7 @@ def ExcelGraph():
     B()
     C()
     D()
-    # E()
+    E()
     # if Data.rb > 1:
     #     F()
     
@@ -94,7 +94,7 @@ def B():
     chartB2.width = 5
     chartB2.height =5
     chartB2.legend = None
-    chartB2.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True))
+    chartB2.graphical_properties = GraphicalProperties(ln=LineProperties(noFill=True, solidFill = None, gradFill = None))
     chartB2.dLbls = DataLabelList()
     chartB2.dLbls.showPercent = True
 
@@ -422,8 +422,22 @@ def D():
     chartD9.dLbls.showCatName = True
     sheetD.add_chart(chartD9, 'W31')
 
+    # wb.save('{}.xlsx'.format(savepath))
+    # tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료')
+
+def E():
+    E그래프data = Data.기술성장()
+    sheetE = wb.create_sheet('기술성장도', 4)
+    D그래프data1 = Data.내외국인점유율()
+    for r in dataframe_to_rows(E그래프data, index=False, header=True):
+        sheetE.append(r)
+
+
+
     wb.save('{}.xlsx'.format(savepath))
     tkinter.messagebox.showinfo('messagebox', '그래프 생성 완료')
+
+
 
 # def F():
 #     sheetF = wb.create_sheet('기술분류별 출원동향', ?)

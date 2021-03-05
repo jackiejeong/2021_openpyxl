@@ -192,9 +192,25 @@ def 외국인점유율():
     D그래프data2 = pd.concat([D그래프coacat2, D그래프4], axis = 1)
     return D그래프data2
 
-# def 기술성장():
+def 기술성장():
+    Econdition1 = (Rawdata['출원연도'] != (datetime.today().year))
+    출원연도data = Rawdata[Econdition1]
+    Econdition2 = (Rawdata['출원연도'] != (datetime.today().year-1))
+    출원연도data = Rawdata[Econdition2]
+    Econdition3 = (Rawdata['출원연도'] != (datetime.today().year-2))
+    출원연도data = 출원연도data[Econdition3]
 
 
+
+
+
+    return 출원연도data
+    # # Econdition2 = (Rawdata['출원연도'] != (datetime.today().year -1))
+
+    # for year in range(6)
+    # 출원건수data = np.where(출원건수data == )
+
+    # # years = year + (datetime.today().year - 19)
 
 
 
